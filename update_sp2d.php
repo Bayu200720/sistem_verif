@@ -20,8 +20,10 @@
         $result = $db->query($query);
         
       $data = find_Tpengajuan($pengajuan['id']);
-//      var_dump($data);exit();
-      $insert ="INSERT INTO pencairan(id_pengajuan,nominal,keterangan,tanggal,id_satker,spm)VALUES({$pengajuan['id']},{$data['jum']},'Pengajuan','{$data['tanggal']}',{$data['id_satker']},{$data['SPM']})";
+      $pengajuan = find_by_id('pengajuan',$pengajuan['id']);
+     // var_dump($pengajuan);
+      $insert ="INSERT INTO pencairan(id_pengajuan,nominal,keterangan,tanggal,id_satker,spm,id_jenis_bendahara)VALUES({$pengajuan['id']},{$data['jum']},'Pengajuan','{$data['tanggal']}',{$data['id_satker']},{$data['SPM']},'{$pengajuan['id_jenis_bendahara']}')";
+      //var_dump($insert);exit();
       $db->query($insert);
 
         $session->msg('s',' Berhasil di Proses');

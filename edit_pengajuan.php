@@ -20,9 +20,10 @@
      $p_pengajuan = remove_junk($db->escape($_POST['p_pengajuan']));
      $user_id   = remove_junk($db->escape($_SESSION['user_id']));
      $id_jenis_pengajuan = remove_junk($db->escape($_POST['id_jenis_pengajuan']));
+     $id_jenis_bendahara = remove_junk($db->escape($_POST['id_jenis_bendahara']));
      $date    = make_date();
      $query  = "UPDATE pengajuan SET";
-     $query .=" SPM='{$spm}',id_jenis_pengajuan='{$id_jenis_pengajuan}'";
+     $query .=" SPM='{$spm}',id_jenis_pengajuan='{$id_jenis_pengajuan}', id_jenis_bendahara=$id_jenis_bendahara ";
      $query .= " WHERE id ='{$_GET['id']}'";
      if($db->query($query)){
        $session->msg('s',"Pengajuan berhasil di edit ");
@@ -87,6 +88,24 @@
                   <select class="form-control" name="id_jenis_pengajuan" required>
                       <option value="<?=$pengajuan['id_jenis_pengajuan'];?>"><?php $jenis=find_by_id('jenis_pengajuan',$pengajuan['id_jenis_pengajuan']); echo $jenis['keterangan']?></option>
                       <?php $jenis = find_all('jenis_pengajuan');?>
+                    <?php  foreach ($jenis as $j): ?>
+                      <option value="<?php echo (int)$j['id'] ?>">
+                        <?php echo $j['keterangan'] ?></option>
+                    <?php endforeach; ?>
+                </select>
+               </div>
+              </div>
+
+              <div class="form-group">
+                <div class="input-group">
+                <span class="input-group-addon">
+                   <i class="glyphicon glyphicon-th-large"></i>
+                  </span>
+                  <select class="form-control" name="id_jenis_bendahara" required>
+                  <option value="<?=$pengajuan['id_jenis_bendahara'];?>"><?php $jenis=find_by_id('jenis_bendahara',$pengajuan['id_jenis_bendahara']); echo $jenis['keterangan']?></option>
+                      <?php  
+                      $jenis = find_all('jenis_bendahara');
+                      ?>
                     <?php  foreach ($jenis as $j): ?>
                       <option value="<?php echo (int)$j['id'] ?>">
                         <?php echo $j['keterangan'] ?></option>

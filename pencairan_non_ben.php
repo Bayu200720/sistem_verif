@@ -145,7 +145,7 @@ if(isset($_POST['update_sp2d'])){
       }
 }
 
-$sales = find_all_global_pencairan('pencairan',0,1);
+$sales = find_all_global_pencairan('pencairan',0,0);
 
 ?>
 <?php include_once('layouts/header.php'); ?>
@@ -209,7 +209,7 @@ $sales = find_all_global_pencairan('pencairan',0,1);
                 
              </tr>
             <?php endforeach;?>
-            <input type="submit" name="cetak" class="btn btn-success" value="Cetak">
+            
             </form>
            </tbody>
          </table>

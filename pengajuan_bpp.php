@@ -78,7 +78,7 @@ if(isset($_GET['s']) and $_GET['s']==='hapus_adk'){
              <tr class="text-center"> 
                <td class="text-center"><?php echo count_id();?></td>
                <td><?php echo remove_junk($sale['SPM']); ?></td>
-               <td><?php $jenis = find_by_id('jenis_pengajuan',$sale['id_jenis_pengajuan']); echo $jenis['keterangan']?></td>
+               <td><?php $jenis = find_by_id('jenis_pengajuan',$sale['id_jenis_pengajuan']); echo $jenis['keterangan']?>//<?php $jenis=find_by_id('jenis_bendahara',$sale['id_jenis_bendahara']); echo $jenis['keterangan']?></td>
                <td class="text-center"><?php if($sale['status_verifikasi']==0){?><span class="label label-danger">Belom di Proses</span><?php }else{?>
              <span class="label label-success">Sudah di Proses oleh <?php $user = find_by_id('users',(int)$sale['status_verifikasi']);echo $user['name'];?></span><?php } ?>
 
@@ -118,7 +118,13 @@ if(isset($_GET['s']) and $_GET['s']==='hapus_adk'){
             </td>
             <td class="text-center">
                 <a href="detail_dokumen.php?id=<?=$sale['id']?>" class="btn btn-primary">Upload Dokumen</a>
-                <a href="histori.php?id=<?=$sale['id']?>" class="btn btn-primary">Histori</a>
+                <a href="histori.php?id=<?=$sale['id']?>" class="btn btn-primary">Histori
+                <?php $hsl = find_count_global('histori',$sale['id'],'id_pengajuan'); 
+                    if($hsl[0]['jml'] > 0){
+                      echo '<span class="badge">'.$hsl[0]['jml'].'</span>';
+                      } ?>
+                </a>
+                
             </td>
 
             <td class="text-center">

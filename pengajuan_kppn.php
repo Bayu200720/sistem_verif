@@ -58,6 +58,7 @@ if(isset($_POST['update_sp2d'])){
                   <tr>
                     <th class="text-center" style="width: 50px;">#</th>
                     <th class="text-center" > SPM </th>
+                    <th class="text-center" > Histori </th>
                     <th class="text-center" > Jenis Pengajuan</th>
                     <th class="text-center" > Satker </th>
                     <th class="text-center" > Tanggal </th>
@@ -74,15 +75,25 @@ if(isset($_POST['update_sp2d'])){
                     <?php echo remove_junk($sale['SPM']); ?>
                     
                   </td>
+                  <td class="text-center">
+                <a href="detail_dokumen.php?id=<?=$sale['id']?>" class="btn btn-primary">Upload Dokumen</a>
+                <a href="histori.php?id=<?=$sale['id']?>" class="btn btn-primary">Histori
+                <?php $hsl = find_count_global('histori',$sale['id'],'id_pengajuan'); 
+                    if($hsl[0]['jml'] > 0){
+                      echo '<span class="badge">'.$hsl[0]['jml'].'</span>';
+                      } ?>
+                </a>
+                
+                 </td>
                   <td class="text-center"><?php $nodin=find_by_id('nodin',$sale['id_nodin']);$jenis=find_by_id('jenis',$nodin['id_jenis']); echo $jenis['keterangan']?> </td>
                   <td class="text-center" ><?php $nodin=find_by_id('nodin',$sale['id_nodin']);$satker=find_by_id('satker',$nodin['id_satker']); echo $satker['keterangan']?></td>
                   <td class="text-center"><?php $nodin= find_by_id('nodin',$sale['id_nodin']);echo $nodin['tanggal']; ?></td>
                   <td class="text-center" ><?php $tp=find_NominalPengajuan($sale['id']);echo rupiah($tp['jum']);?></td>
                   <td class="text-center" >
                 	<?php if($sale['status_kppn'] == 0){
-                           echo "<span class='glyphicon glyphicon-remove-circle'></span>Belom Proses ";
+                           echo "<span class='glyphicon glyphicon-remove-circle btn-danger'></span>Belom Proses ";
                       }else{
-                          echo "<span class='glyphicon glyphicon-ok-circle'></span>Telah di Proses ";
+                          echo "<span class='glyphicon glyphicon-ok-circle btn-success'></span>Telah di Proses ";
                       }	             		
                 	?>
               </td>

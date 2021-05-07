@@ -151,6 +151,13 @@ function find_all_global($table,$id,$key) {
      return find_by_sql("SELECT * FROM ".$db->escape($table)." WHERE {$db->escape($key)} ='{$db->escape($id)}' ORDER BY id DESC");
    }
 }
+function find_all_global_pencairan($table,$id,$id2) {
+  global $db;
+  if(tableExists($table))
+  {
+    return find_by_sql("SELECT * FROM ".$db->escape($table)." WHERE status ='{$db->escape($id)}' AND id_jenis_bendahara ='{$db->escape($id2)}' ORDER BY id DESC");
+  }
+}
 function find_count_global($table,$id,$key) {
    global $db;
    if(tableExists($table))

@@ -28,7 +28,10 @@
        <span>Pencairan</span>
       </a>
       <ul class="nav submenu">
-         <li><a href="pencairan.php">Manage Pencairan</a> </li>
+         <li><a href="pencairan.php">Manage Bendahara</a> </li>
+     </ul>
+     <ul class="nav submenu">
+         <li><a href="pencairan_non_ben.php">Manage Non Ben</a> </li>
      </ul>
      <ul class="nav submenu">
          <li><a href="cetakP.php">Cetak Pencairan</a> </li>

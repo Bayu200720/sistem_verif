@@ -24,11 +24,12 @@
      $user_id   = remove_junk($db->escape($_SESSION['user_id']));
      $id_nodin = remove_junk($db->escape($_POST['id']));
      $id_jenis_pengajuan = remove_junk($db->escape($_POST['id_jenis_pengajuan']));
+     $id_jenis_bendahara = remove_junk($db->escape($_POST['id_jenis_bendahara']));
      $date    = make_date();
      $query  = "INSERT INTO pengajuan (";
-     $query .=" SPM,id_nodin,id_jenis_pengajuan ";
+     $query .=" SPM,id_nodin,id_jenis_pengajuan,id_jenis_bendahara ";
      $query .=") VALUES (";
-     $query .=" '{$spm}','{$id_nodin}',{$id_jenis_pengajuan}";
+     $query .=" '{$spm}','{$id_nodin}',{$id_jenis_pengajuan},{$id_jenis_bendahara}";
      $query .=")";
      $result =$db->query($query);
      
@@ -105,6 +106,24 @@
                       $jenis = find_all_global_ls('jenis_pengajuan',6,7,'id');
                       echo "LSSS"; 
                     }
+                      ?>
+                    <?php  foreach ($jenis as $j): ?>
+                      <option value="<?php echo (int)$j['id'] ?>">
+                        <?php echo $j['keterangan'] ?></option>
+                    <?php endforeach; ?>
+                </select>
+               </div>
+              </div>
+
+              <div class="form-group">
+                <div class="input-group">
+                <span class="input-group-addon">
+                   <i class="glyphicon glyphicon-th-large"></i>
+                  </span>
+                  <select class="form-control" name="id_jenis_bendahara" required>
+                      <option value="">Pilih Jenis Bendahara</option>
+                      <?php  
+                      $jenis = find_all('jenis_bendahara');
                       ?>
                     <?php  foreach ($jenis as $j): ?>
                       <option value="<?php echo (int)$j['id'] ?>">
