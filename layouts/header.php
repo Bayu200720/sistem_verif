@@ -20,7 +20,7 @@
       
         <style>
     body {
-      //background: url('uploads/users/undraw_Scrum_board_re_wk7v.png');
+      /* background: url('uploads/users/undraw_Scrum_board_re_wk7v.png'); */
        background-color:powderblue;
         
 		background-size:cover;
@@ -71,7 +71,17 @@
       </div>
      </div>
     </header>
-    <div class="sidebar">
+    <div id="sidebar-wrapper" class="sidebar">
+      <!-- main navigation for sidebar -->
+      <ul>
+        <li>
+          <a href="javascript:" id="menu-toggle">
+            <i id="hide-sidebar" class="glyphicon glyphicon-chevron-left"></i>
+            <i id="show-sidebar" class="glyphicon glyphicon-chevron-right"></i>
+            <span>Menu</span>
+            </a>
+        </li>
+      </ul>
       <?php if($user['user_level'] === '1'): ?>
         <!-- admin menu -->
         <?php include_once('admin_menu.php');?>
@@ -97,5 +107,5 @@
    </div>
 <?php endif;?>
 
-<div class="page">
+<div id="app-page" class="page">
   <div class="container-fluid">

@@ -304,3 +304,42 @@ input[type=file]{
   width: 125px;
   height: 125px;
 }
+
+/* Sidebar with transtion */
+#sidebar-wrapper {
+  transition: all .4s ease 0s;
+}
+
+#sidebar-wrapper.not-active {
+  width: 60px;
+}
+
+#sidebar-wrapper.not-active #hide-sidebar,
+#sidebar-wrapper #show-sidebar {
+  display: none;
+}
+
+#sidebar-wrapper.not-active #show-sidebar,
+#sidebar-wrapper #hide-sidebar {
+  display: ruby-base;
+}
+
+#sidebar-wrapper.not-active .sidebar-nav li:hover {
+  width: 250px;
+  background-color: #35404d;
+}
+
+#app-page {
+  transition: all .4s ease 0s;
+}
+
+#app-page.not-active {
+  padding: 35px 15px 20px 75px;
+}
+
+
+@media screen and (max-width: 540px) {
+  header div.logo {
+    display: none;
+  }
+}

@@ -1,4 +1,4 @@
-<ul>
+<ul class="sidebar-nav">
   <li>
     <a href="home.php">
       <i class="glyphicon glyphicon-home"></i>

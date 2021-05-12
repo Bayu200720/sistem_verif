@@ -161,23 +161,28 @@ function suggetion() {
     });
   }
 
-  $(document).ready(function() {
+$(document).ready(function() {
 
-    //tooltip
-    $('[data-toggle="tooltip"]').tooltip();
+  //tooltip
+  $('[data-toggle="tooltip"]').tooltip();
 
-    $('.submenu-toggle').click(function () {
-       $(this).parent().children('ul.submenu').toggle(200);
-    });
-    //suggetion for finding product names
-    suggetion();
-    // Callculate total ammont
-    total();
-
-    $('.datepicker')
-        .datepicker({
-            format: 'yyyy-mm-dd',
-            todayHighlight: true,
-            autoclose: true
-        });
+  $('.submenu-toggle').click(function () {
+      $(this).parent().children('ul.submenu').toggle(200);
   });
+  //suggetion for finding product names
+  suggetion();
+  // Callculate total ammont
+  total();
+
+  $('.datepicker').datepicker({
+    format: 'yyyy-mm-dd',
+    todayHighlight: true,
+    autoclose: true
+  });
+
+  $('#menu-toggle').on('click', function () {
+    $('#app-page').toggleClass('not-active');
+    $('#sidebar-wrapper').toggleClass('not-active');
+  })
+});
+
