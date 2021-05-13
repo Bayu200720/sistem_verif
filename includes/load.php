@@ -11,6 +11,7 @@ define("DS", DIRECTORY_SEPARATOR);
 // -----------------------------------------------------------------------
 defined('SITE_ROOT')? null: define('SITE_ROOT', realpath(dirname(__FILE__)));
 define("LIB_PATH_INC", SITE_ROOT.DS);
+define('ROOTDIR', __DIR__.'/../');
 
 error_reporting(0);
 require_once(LIB_PATH_INC.'config.php');
@@ -20,4 +21,4 @@ require_once(LIB_PATH_INC.'upload.php');
 require_once(LIB_PATH_INC.'database.php');
 require_once(LIB_PATH_INC.'sql.php');
 
-?>
+require __DIR__ . '/../vendor/autoload.php';

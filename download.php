@@ -1,5 +1,6 @@
 <?php 
 	require_once('includes/load.php');
+	require './utils/zipfile.php';
 	error_reporting(0);
 	// Enter the name of directory 
 	$pathPr 	= "uploads/products/";  
@@ -8,98 +9,100 @@
 	$pathPJ 	= "uploads/pertanggungjawaban/";
 	$pathK 		= "uploads/kekurangan/";
 	
-	$zip = new ZipArchive; 
+	$zipfiles = [];
+	$isDownload = true;
+	$zipNames = null;
+	$fileNameKey = microtime(true);
 
 	if(!empty($_GET['spm'])){
 		$user 	= find_by_id('users',$_SESSION['user_id']);
 		$satker = find_all_global('satker',$user['id_satker'], 'id');
 		$sales 	= find_nodin_j_pengajuan_spm($_GET['spm']);
-
-		// Enter the name to creating zipped directory 
-		$zipcreated = "uploads/dokumen/Dokumen Rampung SPM ".$_GET['spm']." Tgl. ".strtotime(date('d-m-Y')).".zip"; 
-
-		if($zip->open($zipcreated, ZipArchive::CREATE ) === TRUE) {
-			if(!empty($sales[0]['upload'])){
-				$zip->addFile($pathPr.$sales[0]['upload'], 'Dokumen Pengajuan '." Tgl. ".strtotime(date('d-m-Y')).'.pdf'); 
-			}
-
-			if(!empty($sales[0]['file_spm'])){
-				$zip->addFile($pathSPM.$sales[0]['file_spm'], 'Dokumen SPM '." Tgl. ".strtotime(date('d-m-Y')).'.pdf'); 
-			}
-			
-			if(!empty($sales[0]['file_sp2d'])){
-				$zip->addFile($pathSP2D.$sales[0]['file_sp2d'], 'Dokumen SP2D '." Tgl. ".strtotime(date('d-m-Y')).'.pdf'); 
-			}
-			if(!empty($sales[0]['upload_pertanggungjawaban'])){
-				$zip->addFile($pathSP2D.$sales[0]['upload_pertanggungjawaban'], 'Dokumen Pertanggungjawaban '." Tgl. ".strtotime(date('d-m-Y')).'.pdf'); 
-			}
-			if(!empty($sales[0]['upload_kekurangan'])){
-				$zip->addFile($pathK.$sales[0]['upload_kekurangan'], 'Dokumen Kekurangan '." Tgl. ".strtotime(date('d-m-Y')).'.pdf'); 
-			}
-			$zip ->close(); 
-
+		$zipNames = "Dokumen Rampung SPM ".$_GET['spm']." Tgl. ".$fileNameKey.".zip";
+		array_push($zipfiles, [
+			'zipName' => $zipNames,
+			'zips' => []
+		]);
+		if(!empty($sales[0]['upload']) && file_exists(ROOTDIR.$pathPr.$sales[0]['upload'])){
+			array_push($zipfiles[0]['zips'], [
+				'origin' => ROOTDIR.$pathPr.$sales[0]['upload'],
+				'rename' => 'Dokumen Pengajuan '." Tgl. ".strtotime(date('d-m-Y')).'.pdf'
+			]);
 		}
-
-		if(filesize($zipcreated) > 0){
-
-			$file_name = basename($zipcreated);
-
-			header("Content-Type: application/zip");
-			header("Content-Disposition: attachment; filename=$file_name");
-			header("Content-Length: " . filesize($zipcreated));
-			
-			readfile($zipcreated);
-			exit();
-		}else{
-			echo "<script>alert('Dokumen kosong..');window.location='Pertanggungjawaban.php';</script>";
+	
+		if(!empty($sales[0]['file_spm']) && file_exists(ROOTDIR.$pathSPM.$sales[0]['file_spm'])){
+			array_push($zipfiles[0]['zips'], [
+				'origin' => ROOTDIR.$pathSPM.$sales[0]['file_spm'],
+				'rename' => 'Dokumen SPM '." Tgl. ".strtotime(date('d-m-Y')).'.pdf'
+			]);
 		}
-	}else if(empty($_GET['spm'])){
-		$user 	= find_by_id('users',$_SESSION['user_id']);
-		$satker = find_all_global('satker',$user['id_satker'], 'id');
-		$arr 	= explode(',', $_GET['arr']);
+		
+		if(!empty($sales[0]['file_sp2d']) && file_exists(ROOTDIR.$pathSP2D.$sales[0]['file_sp2d'])){
+			array_push($zipfiles[0]['zips'], [
+				'origin' => ROOTDIR.$pathSP2D.$sales[0]['file_sp2d'],
+				'rename' => 'Dokumen SP2D '." Tgl. ".strtotime(date('d-m-Y')).'.pdf'
+			]);
+		}
+		if(!empty($sales[0]['upload_pertanggungjawaban']) && file_exists(ROOTDIR.$pathPJ.$sales[0]['upload_pertanggungjawaban'])){
+			array_push($zipfiles[0]['zips'], [
+				'origin' => ROOTDIR.$pathPJ.$sales[0]['upload_pertanggungjawaban'],
+				'rename' => 'Dokumen Pertanggungjawaban '." Tgl. ".strtotime(date('d-m-Y')).'.pdf'
+			]);
+		}
+		if(!empty($sales[0]['upload_kekurangan']) && file_exists(ROOTDIR.$pathK.$sales[0]['upload_kekurangan'])){
+			array_push($zipfiles[0]['zips'], [
+				'origin' => ROOTDIR.$pathK.$sales[0]['upload_kekurangan'],
+				'rename' => 'Dokumen Kekurangan '." Tgl. ".strtotime(date('d-m-Y')).'.pdf'
+			]);
+		}
+		createZipFile($zipfiles, $zipNames, false, true, $_GET['spm']);
+	} elseif (empty($_GET['spm'])) {
+		$arr = explode(',', $_GET['arr']);
+		$zipNames = "All Dokumen Rampung SPM Tgl. ".$fileNameKey.".zip";
 
-		foreach ($arr as $value) {
+		foreach ($arr as $key => $value) {
 			$sales 	= find_nodin_j_pengajuan_spm($value);
-			if(!in_array('', $sales[0])){
-				// Enter the name to creating zipped directory 
-				$zipcreated = "uploads/dokumen/Dokumen Rampung SPM ".$value." Tgl. ".strtotime(date('d-m-Y')).".zip"; 
+			if (count($sales[0]) > 0) {
+				$zipcreated = "Dokumen Rampung SPM ".$value." Tgl. ".$fileNameKey.".zip"; 
 
-				if($zip->open($zipcreated, ZipArchive::CREATE ) === TRUE) {  
-					if(!empty($sales[0]['upload'])){
-						$zip->addFile($pathPr.$sales[0]['upload'], 'Dokumen Pengajuan '." Tgl. ".strtotime(date('d-m-Y')).'.pdf'); 
-					}
+				array_push($zipfiles, [
+					'zipName' => $zipcreated,
+					'zips' => []
+				]);
 
-					if(!empty($sales[0]['file_spm'])){
-						$zip->addFile($pathSPM.$sales[0]['file_spm'], 'Dokumen SPM '." Tgl. ".strtotime(date('d-m-Y')).'.pdf'); 
-					}
-					
-					if(!empty($sales[0]['file_sp2d'])){
-						$zip->addFile($pathSP2D.$sales[0]['file_sp2d'], 'Dokumen SP2D '." Tgl. ".strtotime(date('d-m-Y')).'.pdf'); 
-					}
-					if(!empty($sales[0]['upload_pertanggungjawaban'])){
-						$zip->addFile($pathSP2D.$sales[0]['upload_pertanggungjawaban'], 'Dokumen Pertanggungjawaban '." Tgl. ".strtotime(date('d-m-Y')).'.pdf'); 
-					}
-					if(!empty($sales[0]['upload_kekurangan'])){
-						$zip->addFile($pathK.$sales[0]['upload_kekurangan'], 'Dokumen Kekurangan '." Tgl. ".strtotime(date('d-m-Y')).'.pdf'); 
-					} 
-					$zip ->close(); 
-				} 
-				
-				if(filesize($zipcreated) > 0){
-
-					$file_name = basename($zipcreated);
-
-					header("Content-Type: application/zip");
-					header("Content-Disposition: attachment; filename=$file_name");
-					header("Content-Length: " . filesize($zipcreated));
-					
-					readfile($zipcreated);
-					exit();
+				if(!empty($sales[0]['upload']) && file_exists(ROOTDIR.$pathPr.$sales[0]['upload'])){
+					array_push($zipfiles[$key]['zips'], [
+						'origin' => ROOTDIR.$pathPr.$sales[0]['upload'],
+						'rename' => 'Dokumen Pengajuan '." Tgl. ".strtotime(date('d-m-Y')).'.pdf'
+					]);
 				}
-			}else{
-				echo "<script>alert('Dokumen kosong..');window.location='Pertanggungjawaban.php';</script>";
+			
+				if(!empty($sales[0]['file_spm']) && file_exists(ROOTDIR.$pathSPM.$sales[0]['file_spm'])){
+					array_push($zipfiles[$key]['zips'], [
+						'origin' => ROOTDIR.$pathSPM.$sales[0]['file_spm'],
+						'rename' => 'Dokumen SPM '." Tgl. ".strtotime(date('d-m-Y')).'.pdf'
+					]);
+				}
+				
+				if(!empty($sales[0]['file_sp2d']) && file_exists(ROOTDIR.$pathSP2D.$sales[0]['file_sp2d'])){
+					array_push($zipfiles[$key]['zips'], [
+						'origin' => ROOTDIR.$pathSP2D.$sales[0]['file_sp2d'],
+						'rename' => 'Dokumen SP2D '." Tgl. ".strtotime(date('d-m-Y')).'.pdf'
+					]);
+				}
+				if(!empty($sales[0]['upload_pertanggungjawaban']) && file_exists(ROOTDIR.$pathPJ.$sales[0]['upload_pertanggungjawaban'])){
+					array_push($zipfiles[$key]['zips'], [
+						'origin' => ROOTDIR.$pathPJ.$sales[0]['upload_pertanggungjawaban'],
+						'rename' => 'Dokumen Pertanggungjawaban '." Tgl. ".strtotime(date('d-m-Y')).'.pdf'
+					]);
+				}
+				if(!empty($sales[0]['upload_kekurangan']) && file_exists(ROOTDIR.$pathK.$sales[0]['upload_kekurangan'])){
+					array_push($zipfiles[$key]['zips'], [
+						'origin' => ROOTDIR.$pathK.$sales[0]['upload_kekurangan'],
+						'rename' => 'Dokumen Kekurangan '." Tgl. ".strtotime(date('d-m-Y')).'.pdf'
+					]);
+				}
 			}
 		}
+		createZipFile($zipfiles, $zipNames, true, true);
 	}
-
-?>

@@ -3,3 +3,5 @@ uploads
 
 # Eclude folder push to github
 Makefile
+
+/vendor/
