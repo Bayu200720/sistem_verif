@@ -17,4 +17,3 @@
   define( 'DB_PASS', '' );             // Set database password
   define( 'DB_NAME', 'db_pengajuan1' );        // Set database name
 
-?>
