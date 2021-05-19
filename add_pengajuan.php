@@ -13,6 +13,7 @@
 ?>
 <?php
  if(isset($_POST['add_pengajuan'])){
+   //var_dump($_POST);exit();
    $req_fields = array('spm','id_jenis_pengajuan');
    validate_fields($req_fields);
    if(empty($errors)){
@@ -81,7 +82,15 @@
                   <span class="input-group-addon">
                    <i class="glyphicon glyphicon-th-large"></i>
                   </span>
-                  <input type="text" class="form-control" name="spm" placeholder="SPM" required>
+                  
+                  <?php 
+                  $user = find_by_id('users',$_SESSION['user_id']); 
+                   if($user['id_satker'] == 1 ||$user['id_satker'] == 2 || $user['id_satker'] == 3 || $user['id_satker'] == 4 ||$user['id_satker'] == 14){ 
+                 ?>
+                  <input type="number" class="form-control"  value="<?php echo rand()?>" name="spm">
+                  <?php }else{ ?>
+                    <input type="text" class="form-control" name="spm" placeholder="SPM" required>
+                  <?php } ?>
                   <input type="hidden" class="form-control" value="<?=$_GET['id'];?>" name="id" placeholder="SPM" >
                </div>
               </div>

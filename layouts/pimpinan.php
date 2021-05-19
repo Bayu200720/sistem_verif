@@ -24,6 +24,17 @@
          <li><a href="nodin_pimpinan_pum.php">Manage Pengajuan UP</a> </li>
      </ul>
   </li>
+  <?php if($_SESSION['user_id'] == 38){ ?>
+  <li>
+    <a href="#" class="submenu-toggle">
+      <i class="glyphicon glyphicon-th-list"></i>
+       <span>Pengajuan LS PUM</span>
+      </a>
+      <ul class="nav submenu">
+         <li><a href="nodin_pimpinan_ls.php">Manage Pengajuan LS</a> </li>
+     </ul>
+  </li>
+  <?php } ?>
   <!-- <li>
     <a href="#" class="submenu-toggle">
       <i class="glyphicon glyphicon-th-list"></i>

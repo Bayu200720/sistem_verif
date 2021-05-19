@@ -36,6 +36,43 @@ if(isset($_GET['s']) and $_GET['s']==='hapus_adk'){
     }
 }
 
+
+if(isset($_POST['no_spm'])){
+  $req_fields = array('spm');
+  $id = remove_junk($db->escape($_POST['id']));
+  $spm = remove_junk($db->escape($_POST['spm']));
+  validate_fields($req_fields);
+  if(empty($errors)){
+    $id   = remove_junk($db->escape($_POST['id']));
+    
+    $query  = "UPDATE pengajuan SET ";
+    $query .=" SPM = '{$spm}'";
+    $query .=" WHERE id='{$id}'";
+    //var_dump($query);exit();
+    if($db->query($query)){
+      $session->msg('s',"Konfirmasi Updated ");
+      if($user['user_level']==2){
+       redirect('pengajuan_bpp.php?id='.$_GET['id'], false);
+      }else{
+      redirect('pengajuan_bpp.php?id='.$_GET['id'], false);
+      }
+    } else {
+      $session->msg('d',' Sorry failed to Updated!');
+      if($user['user_level']==2){
+       redirect('pengajuan_bpp.php?id='.$_GET['id'], false);
+     }else{
+        redirect('pengajuan_bpp.php?id='.$_GET['id'], false);
+     }
+    }
+
+  } else{
+    $session->msg("d", $errors);
+    redirect('pengajuan_bpp.php?id='.$_GET['id'],false);
+  }
+
+}
+
+
 ?>
 <?php include_once('layouts/header.php'); ?>
 <div class="row">
@@ -77,8 +114,17 @@ if(isset($_GET['s']) and $_GET['s']==='hapus_adk'){
              <?php foreach ($sales as $sale):?>
              <tr class="text-center"> 
                <td class="text-center"><?php echo count_id();?></td>
-               <td><?php echo remove_junk($sale['SPM']); ?></td>
-               <td><?php $jenis = find_by_id('jenis_pengajuan',$sale['id_jenis_pengajuan']); echo $jenis['keterangan']?>//<?php $jenis=find_by_id('jenis_bendahara',$sale['id_jenis_bendahara']); echo $jenis['keterangan']?></td>
+               <td><?php 
+                  if($_SESSION['user_id'] == 38){
+                    ?>
+                    <a href="#" class="btn btn-primary" id="UploadSPM" data-toggle="modal" data-target="#uploadSPM" data-id='<?=$sale['id'];?>'><?php echo $sale['SPM']; ?></a>
+                    <?php
+                  }else{
+                    echo remove_junk($sale['SPM']);
+                  }
+                  ?>
+              </td>
+               <td><?php $jenis = find_by_id('jenis_pengajuan',$sale['id_jenis_pengajuan']); echo $jenis['keterangan']?>/<?php $jenis=find_by_id('jenis_bendahara',$sale['id_jenis_bendahara']); echo $jenis['keterangan']?></td>
                <td class="text-center"><?php if($sale['status_verifikasi']==0){?><span class="label label-danger">Belom di Proses</span><?php }else{?>
              <span class="label label-success">Sudah di Proses oleh <?php $user = find_by_id('users',(int)$sale['status_verifikasi']);echo $user['name'];?></span><?php } ?>
 
@@ -176,3 +222,31 @@ if(isset($_GET['s']) and $_GET['s']==='hapus_adk'){
     </div>
   </div>
 <?php include_once('layouts/footer.php'); ?>
+
+
+<!-- Modal edit no nodin-->
+<div class="modal fade" id="uploadSPM" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit SPM</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="" method="POST">
+      <div class="modal-body">
+       <div class="form-group">
+        <label for="exampleInputEmail1">No SPM</label>
+        <input type="number" class="form-control" id="spm" name="spm" placeholder="SPM">
+        <input type="hidden" class="form-control" id="id" name="id" >
+       </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <input type="submit" class="btn btn-primary" name="no_spm" value="Save">
+      </div>
+      </form>
+    </div>
+  </div>
+</div>

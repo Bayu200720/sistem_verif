@@ -2,7 +2,7 @@
   $page_title = 'Dokumen';
   require_once('includes/load.php');
   // Checkin What level user has permission to view this page
-  page_require_level(6);
+  page_require_level(8);
 ?>
 <?php $media_files = find_all('media'); $id=$_GET['id'];
   $user = find_by_id('users',(int)$_SESSION['user_id']);

@@ -7,19 +7,49 @@
 <?php
 $user=find_by_id('users',$_SESSION['user_id']);
 $satker = find_all_global('satker',$user['id_satker'],'id');
-$sales = find_all_global_tahun('nodin',$user['id_satker'],'id_satker',$satker[0]['tahun']);
+$sales = find_all_global_tahun_pum('nodin',$satker[0]['tahun']);
 $pengajuan = find_nodin_j_pengajuan_count($satker[0]['tahun'],$user['id_satker']);
 
-//var_dump($_SESSION); exit();
+if(isset($_POST['nodin'])){
+    $req_fields = array('no_nodin');
+    $id = remove_junk($db->escape($_POST['id']));
+    $no_nodin = remove_junk($db->escape($_POST['no_nodin']));
+    validate_fields($req_fields);
+    if(empty($errors)){
+      $id   = remove_junk($db->escape($_POST['id']));
+      
+      $query  = "UPDATE nodin SET ";
+      $query .=" no_nodin= '{$no_nodin}'";
+      $query .=" WHERE id='{$id}'";
+      //var_dump($query);exit();
+      if($db->query($query)){
+        $session->msg('s',"Konfirmasi Updated ");
+        if($user['user_level']==2){
+         redirect('nodin_pimpinan_ls.php?id='.$_GET['id'], false);
+        }else{
+        redirect('nodin_pimpinan_ls.php?id='.$_GET['id'], false);
+        }
+      } else {
+        $session->msg('d',' Sorry failed to Updated!');
+        if($user['user_level']==2){
+         redirect('nodin_pimpinan_ls.php?id='.$_GET['id'], false);
+       }else{
+          redirect('nodin_pimpinan_ls.php?id='.$_GET['id'], false);
+       }
+      }
+  
+    } else{
+      $session->msg("d", $errors);
+      redirect('nodin_pimpinan_ls.php?id='.$_GET['id'],false);
+    }
+  
+  }
 
 
 ?>
 <?php
 
 if($_GET['p']=='update'){
-
- 
-
     $id   = remove_junk($db->escape($_GET['id']));
 
     $query  = "UPDATE nodin SET ";
@@ -29,15 +59,9 @@ if($_GET['p']=='update'){
   	
     if($db->query($query)){
 
-      if($_SESSION['user_id'] == 43 or $_SESSION['user_id'] == 50  or $_SESSION['user_id'] == 40 or $_SESSION['user_id'] == 37 or $_SESSION['user_id'] == 30){
-        $query1  = "UPDATE nodin SET ";
-        $query1 .=" status_pengajuan= 2";
-        $query1 .=" WHERE id='{$id}'";
-      }else{
         $query1  = "UPDATE nodin SET ";
         $query1 .=" status_pengajuan= 1";
         $query1 .=" WHERE id='{$id}'"; 
-      } 
 
         $db->query($query1);
         $from = $user['email'];    
@@ -49,19 +73,18 @@ if($_GET['p']=='update'){
         echo "Pesan email sudah terkirim.";
 
       $session->msg('s',"Telah di Approvel ");
-     // ini_set( 'display_errors', 1 );   
-   // error_reporting( E_ALL );    
+    
       if($user['user_level']==8){
-       redirect('nodin_pimpinan.php', false);
+       redirect('nodin_pimpinan_ls.php', false);
       }else{
-      redirect('nodin_pimpinan.php', false);
+      redirect('nodin_pimpinan_ls.php', false);
       }
     } else {
       $session->msg('d',' Sorry failed to Pengajuan!');
       if($user['user_level']==8){
-       redirect('nodin_pimpinan.php', false);
+       redirect('nodin_pimpinan_ls.php', false);
      }else{
-        redirect('nodin_pimpinan.php', false);
+        redirect('nodin_pimpinan_ls.php', false);
      }
     }
 
@@ -72,26 +95,26 @@ if($_GET['p']=='batal'){
 
   $id   = remove_junk($db->escape($_GET['id']));
 
-  $query  = "UPDATE nodin SET ";
-  $query .=" approvel_atasan= 0";
-  $query .=" WHERE id='{$id}'";
+//   $query  = "UPDATE nodin SET ";
+//   $query .=" approvel_atasan= 0";
+//   $query .=" WHERE id='{$id}'";
   if($db->query($query)){
     $query1  = "UPDATE nodin SET ";
-    $query1 .=" status_pengajuan= 0";
+    $query1 .=" status_pengajuan= 2";
     $query1 .=" WHERE id='{$id}'";
     $db->query($query1);
     $session->msg('s',"Berhasil di batalkan  ");
     if($user['user_level']==8){
-     redirect('nodin_pimpinan.php', false);
+     redirect('nodin_pimpinan_ls.php', false);
     }else{
-    redirect('nodin_pimpinan.php', false);
+    redirect('nodin_pimpinan_ls.php', false);
     }
   } else {
     $session->msg('d',' Sorry failed to Pengajuan!');
     if($user['user_level']==8){
-     redirect('nodin_pimpinan.php', false);
+     redirect('nodin_pimpinan_ls.php', false);
    }else{
-      redirect('nodin_pimpinan.php', false);
+      redirect('nodin_pimpinan_ls.php', false);
    }
   }
 
@@ -110,7 +133,7 @@ if($_GET['p']=='batal'){
         <div class="panel-heading clearfix">
           <strong>
             <span class="glyphicon glyphicon-th"></span>
-            <span><a href="nodin_pimpinan.php">All Nodin</a></span>
+            <span><a href="nodin_pimpinan_ls.php">All Nodin</a></span>
           </strong>
           <div class="pull-right">
           <a href="allSPM.php" class="btn btn-primary" id="nodin"></span>ALL SPM</a>
@@ -143,19 +166,21 @@ if($_GET['p']=='batal'){
                <td class="text-center"><?php $jenis = find_by_id('jenis',$sale['id_jenis']); echo $jenis['keterangan'];  ?></td>
         
                <td class="text-center"><?php echo $sale['p_pengajuan']; ?></td>
-               <td class="text-center"><?php echo $sale['no_nodin']; ?></td>
+               <td class="text-center">
+               <a href="#" class="btn btn-primary" id="UploadSPM" data-toggle="modal" data-target="#uploadSPM" data-id='<?=$sale['id'];?>'><?php echo $sale['no_nodin']; ?></a> 
+               </td>
 
                 <td class="text-center">
-                <a href="cetakNodin.php?id=<?=$sale['id']?>" class="btn btn-primary" target="_BLANK"><span class="glyphicon glyphicon-print"></span></a>
+                <a href="cetakNodinSes.php?id=<?=$sale['id']?>" class="btn btn-primary" target="_BLANK"><span class="glyphicon glyphicon-print"></span></a>
                 </td>
                 <td class="text-center">
            
-                      <?php if($sale['approvel_atasan'] == 1){
+                      <?php if($sale['status_pengajuan'] == 1){
                                 $pengajuan = find_all_global('nodin',$sale['id'],'id'); 
                         ?>
-                        <a onclick="return confirm('Apakah anda yakin untuk membatalkan Approvel?');" href="nodin_pimpinan.php?id=<?=$sale['id']?>&key=ajukan&p=batal" class="btn btn-success" <?php if($pengajuan[0]['status_verifikasi'] != 0){?> disabled <?php } ?>>Sudah Diapprovel</a>
-                      <?php }else if($sale['approvel_atasan'] == 2){ ?>
-                        <a onclick="return confirm('Apakah anda yakin untuk Approvel?');" href="nodin_pimpinan.php?id=<?=$sale['id']?>&key=ajukan&p=update" class="btn btn-primary">Approvl</a>
+                        <a onclick="return confirm('Apakah anda yakin untuk membatalkan Approvel?');" href="nodin_pimpinan_ls.php?id=<?=$sale['id']?>&key=ajukan&p=batal" class="btn btn-success" <?php if($pengajuan[0]['status_verifikasi'] != 0){?> disabled <?php } ?>>Sudah Diapprovel</a>
+                      <?php }else if($sale['status_pengajuan'] == 2){ ?>
+                        <a onclick="return confirm('Apakah anda yakin untuk Approvel?');" href="nodin_pimpinan_ls.php?id=<?=$sale['id']?>&key=ajukan&p=update" class="btn btn-primary">Approvel</a>
                       <?php } ?>
                 
                 </td>
@@ -163,13 +188,6 @@ if($_GET['p']=='batal'){
 
                 <td class="text-center">
                       <div class="btn-group">
-                      <!-- <a onclick="Tampil(<?=$sale['id'];?>)" class="btn btn-success btn-xs"  title="Detail nodin">
-                          <span class="glyphicon glyphicon-eye-open"></span>
-                        </a>
-                        <a href="#" title="Edit" <?php $nodin = find_by_id('nodin',$sale['id']);?> class="btn btn-warning btn-xs" id="editnodin" data-toggle="modal"  title="Edit nodin"
-                        data-target="#UpdateNodinPengajuan" data-id='<?=$nodin['id'];?>' data-tanggal='<?=$nodin['tanggal'];?>' data-pp='<?=$nodin['p_pengajuan'];?>' data-no_nodin='<?=$nodin['no_nodin'];?>'>
-                        <span class="glyphicon glyphicon-pencil"></span>
-                        </a> -->
                         <a href="pengajuan_bpp.php?id=<?php echo (int)$sale['id'];?>" class="btn btn-primary btn-xs"  title="Detail nodin" data-toggle="tooltip">
                           <span class="glyphicon glyphicon-eye-open"></span>
                         </a>
@@ -194,6 +212,33 @@ if($_GET['p']=='batal'){
     </div>
   </div>
 
+
+<!-- Modal edit no nodin-->
+ <div class="modal fade" id="uploadSPM" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Tambahkan no nodin</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="" method="POST">
+      <div class="modal-body">
+       <div class="form-group">
+        <label for="exampleInputEmail1">No Nodin</label>
+        <input type="number" class="form-control" id="no_nodin" name="no_nodin" placeholder="NO Nodin">
+        <input type="hidden" class="form-control" id="id" name="id" >
+       </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <input type="submit" class="btn btn-primary" name="nodin" value="Save">
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 
 

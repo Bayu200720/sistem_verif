@@ -46,6 +46,17 @@
   <li>
     <a href="#" class="submenu-toggle">
       <i class="glyphicon glyphicon-th-list"></i>
+       <span>BKU PUM</span>
+      </a>
+      <ul class="nav submenu">
+         <li><a href="bpp_pencatatan.php">Pencatatan GU</a> </li>
+         <li><a href="bpp_pencatatan_tup.php">Pencatatan TUP</a> </li>
+         <!-- <li><a href="bpp_sptjb.php">SPTJB</a> </li> -->
+     </ul>
+  </li>
+  <li>
+    <a href="#" class="submenu-toggle">
+      <i class="glyphicon glyphicon-th-list"></i>
        <span>Revolving</span>
       </a>
       <ul class="nav submenu">
