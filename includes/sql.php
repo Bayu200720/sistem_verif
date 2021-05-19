@@ -195,6 +195,14 @@ function find_all_global_tahun($table,$id,$key,$tahun) {
   }
 }
 
+function find_all_global_tahun_pum($table,$tahun) {
+  global $db;
+  if(tableExists($table))
+  {
+    return find_by_sql("SELECT * FROM ".$db->escape($table)." WHERE tahun ='{$tahun}' AND id_jenis =1 and (id_satker = 1 OR id_satker = 2 OR id_satker = 3 OR id_satker = 4 OR id_satker = 14 ) ORDER BY id DESC");
+  }
+}
+
 function find_all_group_by_satker($table,$key,$tahun) {
   global $db;
   if(tableExists($table))
