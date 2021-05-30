@@ -526,6 +526,17 @@ function find_pencairan_tahun($tahun,$id_satker,$panjar){
   $result = find_by_sql($sql);
   return $result;
 }
+
+function find_pencairan_tahun_pum($tahun,$panjar){
+  global $db;
+  $results = array();
+  $sql = "SELECT * ";
+  $sql .="FROM pencairan ";
+  $sql .="WHERE YEAR(tanggal) ='{$tahun}' ";
+  $sql .="and (id_satker ='1' OR id_satker ='2' OR id_satker ='3' OR id_satker ='4' OR id_satker ='14' OR id_satker ='2') and spm like '%{$panjar}%'";
+  $result = find_by_sql($sql);
+  return $result;
+}
   /*--------------------------------------------------------------*/
   /* Function to update the last log in of a user
   /*--------------------------------------------------------------*/

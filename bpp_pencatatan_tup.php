@@ -82,6 +82,7 @@
                         <thead>
                         <tr>
                             <th class="text-center">Jenis Panjar</th>
+                            <th class="text-center">Satker</th>
                             <th class="text-center">Tanggal Pencairan </th>
                             <th class="text-center"> Nominal </th>
                             <th class="text-center"> Saldo </th>
@@ -91,13 +92,21 @@
                         </thead>
                     <tbody>
                         <?php
-                          
-                            $pencairan= find_pencairan_tahun($satker[0]['tahun'],$user['id_satker'],'TUP');
+
+                        echo $_SESSION['user_id'];//exit();
+                            if($_SESSION['user_id'] == 7){
+                              $pencairan= find_pencairan_tahun_pum($satker[0]['tahun'],'TUP');
+                             
+                            }else{
+                              $pencairan= find_pencairan_tahun($satker[0]['tahun'],$user['id_satker'],'TUP');
+                              
+                            }
                         
                         $tot=0; $tot_pengmbalian=0;$tot_hasil=0; 
                         foreach ($pencairan as $sale):?>
                         <tr>
-                            <td class="text-center"><?php echo $sale['spm'];;?></td>
+                            <td class="text-center"><?php echo $sale['spm'];?></td>
+                            <td class="text-center"><?php $satker=find_by_id('satker',$sale['id_satker']); echo $satker['keterangan']?></td>
                             <td class="text-center" >
                                 <?php echo $sale['tanggal'];?>
                             </td>
