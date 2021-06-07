@@ -2,8 +2,7 @@
     RewriteEngine On
     RewriteBase /
 
-    Options -Indexes
-    deny from all
+    Options All -Indexes
 
     <Files .htaccess>
         Order allow,deny
